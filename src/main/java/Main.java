@@ -51,41 +51,65 @@ public class Main {
         String sentence = user.readLine();
         String[] words = sentence.split(" ");
 
-        //height and width of the 3-dimensional table is defined by the amount of words
-        int n = words.length - 1;
+        //the amount of words (=terminal symbols) is used when determining the table size
+        int n = words.length;
 
-        //'grammar size', number of possible rules, +1 because S does not have a parent
-        int m = childtoparent.keySet().size() + 1;
+        // Gammar size (number of possible rules) +1 because the first one does not have a parent.
+        // Right now it's redundantly big, will be optimised later.
+        int m = childtoparent.keySet().size() + parenttochild.keySet().size() + 1;
 
-        //CYK with Hashmap
+
+        //CYK-ALGORITHM (2 parts)
 
         //the 3-dimensional table is going to be used to construct a parse tree.
-        String[][][] T = new String[n+1][n+1][m+1];
+        String[][][] T = new String[2*n+1][2*n+1][m+1];
         //initial values: words as one row in the table
+        //calling the dimensions: T[row][column][page]
         for (int i = 0; i < n; i++) T[i][i][0] = words[i];
 
-        //length of the substring, starting from shortest
-        for (int len = 0; len < n-1; len++) {
-            //i = row and column
-            for (int i = 0; i < n; i++) {
-                //list all children rules ...
+        //fill the bottommost row first with simple rules: fill in the parents whose children have only 1 element
+        for (int i = 0; i < n; i++) {
+            for (int depth = 0; depth < m; depth++) {
+                //fetch the content of a cell
+                List<String> possibleRule = new ArrayList<>();
+                if(T[i][i][depth] != null) possibleRule.add(T[i][i][depth]);
+                else continue;
+                //compare the cell content with every rule (could be optimised by only comparing to the ones with only one element)
                 for (List<String> rule : childtoparent.keySet()) {
-                    //... and check each page per cell(i, i+len) ...
-                    for (int depth = 0; depth < m; depth++) {
-                        //... whether it has the rule.
-                        if (rule.equals(T[i][i+len][depth])) {
-                            //if yes, add all the rules parents to the cells 'list'
-                            for (String parent : childtoparent.get(rule)) T[i][i+len][nextEmpty(T, i, i+len)] = parent;
+                    if (rule.equals(possibleRule)) {
+                        //if found a matching rule, add it's parents to the next empty page corresponding to the cell
+                        for (String parent : childtoparent.get(rule)) {
+                            T[i][i][nextEmpty(T, i, i)] = parent;
                         }
-                        //check for each possible 'pyramid top' pair (here the max elements per rule is 2)
-                        for (int k = 0; k < n; k++) {
-                            //TODO: here you could discard all possible rules with an empty cell
-                            List<String> possibleRule = new ArrayList<>();
-                            possibleRule.add(T[i][i+k][depth]);
-                            possibleRule.add(T[i+k+1][i+len][depth]);
+                    }
+                }
+            }
+        }
 
-                            if (rule.equals(possibleRule)) {
-                                for (String parent : childtoparent.get(rule)) T[i][i+len][nextEmpty(T, i, i+len)] = parent;
+        //continuing to the other rows of the table, starting from the next one from the bottommost one
+
+        //length of the substring, starting from shortest
+        for (int len = 1; len < n; len++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    //2 page counters (=max elements per rule right now)
+                    for (int page1 = 0; page1 < m; page1++) {
+                        for (int page2 = 0; page2 < m; page2++) {
+                            //fetch the contents of the cells
+                            List<String> possibleRule = new ArrayList<>();
+                            if (T[i][i + j][page1] != null && T[i + j + 1][i + len][page2] != null) {
+                                possibleRule.add(T[i][i + j][page1]);
+                                possibleRule.add(T[i + j + 1][i + len][page2]);
+                            } else continue;
+
+                            //compare the cell content with every rule (could be optimised by only comparing to the ones with only two elements)
+                            for (List<String> rule : childtoparent.keySet()) {
+                                if (rule.equals(possibleRule)) {
+                                    //if found a matching rule, add it's parents to the next empty page corresponding to the current cell
+                                    for (String parent : childtoparent.get(rule)) {
+                                        T[i][i + len][nextEmpty(T, i, i + len)] = parent;
+                                    }
+                                }
                             }
                         }
                     }
@@ -93,16 +117,18 @@ public class Main {
             }
         }
 
+        //now finally deciding whether the sentence belongs to the language generated by the grammar
+        boolean belongs = false;
+
         for (int i = 0; i < m+1; i++) {
-            System.out.println(T[0][n][i]);
+            String s = T[0][n-1][i];
+            //if it is a parent and if it does not have a parent itself (= if it is the initial symbol)
+            if (parenttochild.keySet().contains(s) && !childtoparent.keySet().contains(s)) {
+                belongs = true;
+            }
         }
 
-
-        if (parenttochild.keySet().contains(T[0][n][0]) && !childtoparent.keySet().contains(T[0][n][0])) {
-            System.out.println("yes");
-        } else {
-            System.out.println("no");
-        }
+        System.out.println(belongs);
     }
 
     /**
@@ -114,7 +140,7 @@ public class Main {
      */
     private static int nextEmpty(String[][][] t,  int row, int column) {
         for (int depth = 0; depth < t[row][column].length; depth++) {
-            if (t[row][column][depth].isEmpty()) return depth;
+            if (t[row][column][depth] == null) return depth;
         }
         return -1; //something went wrong (rules repeated or something) (right now this is just a test, will fix later)
     }
