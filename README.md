@@ -18,4 +18,5 @@ ___
 
 [Week 2](./documentation/weeklyreports/weeklyreport2.md)
 
+[Week 3](./documentation/weeklyreports/weeklyreport3.md)
 
