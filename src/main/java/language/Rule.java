@@ -15,7 +15,7 @@ public class Rule {
     public Rule(String parent, String... child) {
         this.parent = parent;
         this.child = new ArrayList<>();
-        for (String element: child) {
+        for (String element : child) {
             this.child.add(element);
         }
     }

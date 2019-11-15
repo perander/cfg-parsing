@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'jacoco'
+    id 'checkstyle'
 }
 
 group 'org.example'
@@ -25,3 +26,7 @@ jacocoTestReport {
 }
 
 check.dependsOn jacocoTestReport
+
+checkstyleMain {
+    source ='src/main/java'
+}
