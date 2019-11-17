@@ -64,9 +64,13 @@ public class Grammar {
     }
 
     private void updateMapping(Rule rule) {
+        /*Collecting children to a parent. There might be many, like N -> fish, N -> robots.
+        The order of the elements of a child matters, that's why using a list.*/
         this.parentToChild.putIfAbsent(rule.getParent(), new ArrayList<>());
         this.parentToChild.get(rule.getParent()).add(rule.getChild());
 
+        /*Collecting parents to children. There might be many, like N -> fish, V -> fish.
+        Here the order of parents does not matter, but still using a list:d.*/
         this.childToParent.putIfAbsent(rule.getChild(), new ArrayList<>());
         this.childToParent.get(rule.getChild()).add(rule.getParent());
     }

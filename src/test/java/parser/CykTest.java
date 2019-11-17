@@ -80,7 +80,7 @@ public class CykTest {
         allChildren.add(child2);
 
         phrase = "n vp";
-        words = new String[] {"n", "vp"};
+        words = new String[]{"n", "vp"};
 
         cyk = new Cyk(grammarMock);
 

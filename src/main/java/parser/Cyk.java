@@ -7,9 +7,15 @@ import java.util.List;
 import java.util.Set;
 
 public class Cyk implements Parser {
-    private Grammar grammar; //final?
+    private Grammar grammar;
 
-    public Cyk(Grammar grammar) {
+    public Cyk() { }
+
+    public Cyk(final Grammar grammar) {
+        this.grammar = grammar;
+    }
+
+    public void setGrammar(final Grammar grammar) {
         this.grammar = grammar;
     }
 
@@ -59,13 +65,17 @@ public class Cyk implements Parser {
      */
     public String[][][] fillFirstRow(String[][][] t, int length, int maxDepth, Set<List<String>> children, String[] words) {
         //initial values: words as one row in the table
-        for (int i = 0; i < length; i++) t[i][i][0] = words[i];
+        for (int i = 0; i < length; i++) {
+            t[i][i][0] = words[i];
+        }
 
         //direct rules (parents to children with only 1 element)
         for (int i = 0; i < length; i++) {
             for (int depth = 0; depth < maxDepth; depth++) {
                 //fetch the content of a cell
-                if (t[i][i][depth] == null) continue;
+                if (t[i][i][depth] == null) {
+                    continue;
+                }
 
                 List<String> possibleRule = new ArrayList<>();
                 possibleRule.add(t[i][i][depth]);
@@ -107,8 +117,9 @@ public class Cyk implements Parser {
                             if (t[i][i + j][page1] != null && t[i + j + 1][i + len][page2] != null) {
                                 possibleRule.add(t[i][i + j][page1]);
                                 possibleRule.add(t[i + j + 1][i + len][page2]);
-                            } else continue;
-
+                            } else {
+                                continue;
+                            }
                             //compare the cell content with every rule (could be optimised by only comparing to the ones with only two elements)
                             t = search(t, possibleRule, children, i, i + len);
                         }
@@ -178,7 +189,9 @@ public class Cyk implements Parser {
         int maxDepth = t[row][column].length - 1;
 
         for (int depth = 0; depth < maxDepth; depth++) {
-            if (t[row][column][depth] == null) return depth;
+            if (t[row][column][depth] == null) {
+                return depth;
+            }
         }
         return maxDepth;
     }
