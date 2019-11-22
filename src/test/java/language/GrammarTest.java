@@ -144,4 +144,18 @@ public class GrammarTest {
         assertTrue(!grammar.getTerminals().contains("np"));
     }
 
+    @Test
+    public void getRulesByParent() {
+        List<Rule> rules;
+        String parent = "n";
+
+        Mockito.when(ruleMock.getParent()).thenReturn(parent);
+
+        grammar.addRule(ruleMock);
+
+        rules = grammar.getRulesByParent(parent);
+
+        assertTrue(rules.size() == 1);
+    }
+
 }
