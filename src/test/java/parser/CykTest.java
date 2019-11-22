@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CykTest {
@@ -30,10 +30,8 @@ public class CykTest {
     private List<String> child, child2;
     private Set<String> allParents;
     private Set<List<String>> allChildren;
-    private List<String> parentlist;
-    private List<String> parentlist2;
-    private List<List<String>> childlist;
-    private List<List<String>> childlist2;
+    private List<String> parentlist, parentlist2;
+    private List<List<String>> childlist, childlist2;
 
     @InjectMocks
     Cyk cyk;
@@ -90,12 +88,14 @@ public class CykTest {
     public void belongsToLanguageWorks() {
         T = new String[5][5][10];
 
-        Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
+        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
+        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
 
-        Mockito.when(grammarMock.getAllParents()).thenReturn(allParents);
-        Mockito.when(grammarMock.getAllChildren()).thenReturn(allChildren);
+        when(grammarMock.getAllParents()).thenReturn(allParents);
+        when(grammarMock.getAllChildren()).thenReturn(allChildren);
+
+        when(grammarMock.getRoot()).thenReturn("s");
 
         assertTrue(cyk.belongsToLanguage(grammarMock, phrase));
 
@@ -111,7 +111,7 @@ public class CykTest {
         possibleRule.add("np");
         possibleRule.add("vp");
 
-        Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
+        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
         //Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.search(T, possibleRule, allChildren, 0, 0);
@@ -128,7 +128,7 @@ public class CykTest {
         int maxDepth = 4;
 
         //Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
+        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
 
@@ -145,8 +145,8 @@ public class CykTest {
         int length = 2;
         int maxDepth = 4;
 
-        Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
+        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
+        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
         T = cyk.fillRest(T, length, maxDepth, allChildren);
@@ -166,8 +166,9 @@ public class CykTest {
         int length = 2;
         int maxDepth = 4;
 
-        Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
+        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
+        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
+        when(grammarMock.getRoot()).thenReturn("s");
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
         T = cyk.fillRest(T, length, maxDepth, allChildren);
