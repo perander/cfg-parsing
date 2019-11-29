@@ -1,118 +1,92 @@
 package parser;
 
-
+import basicdatastructures.List;
 import language.Grammar;
 import language.Rule;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CykTest {
+
     private String[][][] T;
     private String phrase;
     private String[] words;
 
-    //don't know if this is ideal:D
     private String parent, parent2;
     private List<String> child, child2;
-    private Set<String> allParents;
-    private Set<List<String>> allChildren;
+    private List<String> allParents;
+    private List<List<String>> allChildren;
     private List<String> parentlist, parentlist2;
     private List<List<String>> childlist, childlist2;
-
-    @InjectMocks
-    Cyk cyk;
-
-    @Mock
-    Grammar grammarMock;
-
-    @Mock
-    Rule ruleMock;
-
-    @Mock
-    Rule ruleMock2;
-
-    //Setting up a small example grammar and the data structures used in the class
+    
+    private Cyk cyk;
+    private Grammar grammar = new Grammar();
+    private Rule rule1 = new Rule();
+    private Rule rule2 = new Rule();
+    
+    
     @Before
     public void setup() {
-        T = new String[2][2][4];
+        T = new String[5][5][10];
         //make phrase
         parent = "s";
         parent2 = "np";
 
-        child = new ArrayList<>();
+        child = new List();
         child.add("np");
         child.add("vp");
 
-        child2 = new ArrayList<>();
+        child2 = new List();
         child2.add("n");
 
-        parentlist = new ArrayList<>();
+        rule1.setParent(parent);
+        rule1.setChild(child);
+        rule2.setParent(parent2);
+        rule2.setChild(child2);
+
+        parentlist = new List();
         parentlist.add(parent);
-        parentlist2 = new ArrayList<>();
+        parentlist2 = new List();
         parentlist2.add(parent2);
 
-        childlist = new ArrayList<>();
+        childlist = new List();
         childlist.add(child);
-        childlist2 = new ArrayList<>();
+        childlist2 = new List();
         childlist2.add(child2);
 
-        allParents = new HashSet<>();
+        allParents = new List();
         allParents.add(parent);
         allParents.add(parent2);
-        allChildren = new HashSet<>();
+        allChildren = new List();
         allChildren.add(child);
         allChildren.add(child2);
 
         phrase = "n vp";
         words = new String[]{"n", "vp"};
 
-        cyk = new Cyk(grammarMock);
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
 
+        cyk = new Cyk(grammar);
     }
 
     @Test
     public void belongsToLanguageWorks() {
-        T = new String[5][5][10];
+        assertTrue(cyk.belongsToLanguage(grammar, phrase));
 
-        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
-
-
-        when(grammarMock.getAllParents()).thenReturn(allParents);
-        when(grammarMock.getAllChildren()).thenReturn(allChildren);
-
-        when(grammarMock.getRoot()).thenReturn("s");
-
-        assertTrue(cyk.belongsToLanguage(grammarMock, phrase));
-
-        T = new String[5][5][10];
         phrase = "n n";
 
-        assertFalse(cyk.belongsToLanguage(grammarMock, phrase));
+        assertFalse(cyk.belongsToLanguage(grammar, phrase));
     }
 
     @Test
     public void searchFindsAMatchWithMatchingRules() {
-        List<String> possibleRule = new ArrayList<>();
+        List<String> possibleRule = new List();
         possibleRule.add("np");
         possibleRule.add("vp");
-
-        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        //Mockito.when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.search(T, possibleRule, allChildren, 0, 0);
 
@@ -120,15 +94,11 @@ public class CykTest {
         assertTrue(T[0][0][1] == null);
     }
 
+
     @Test
     public void fillFirstRowWorks() {
-        T = new String[2][2][4];
-
         int length = 2;
         int maxDepth = 4;
-
-        //Mockito.when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
 
@@ -140,13 +110,8 @@ public class CykTest {
 
     @Test
     public void fillRestWorks() {
-        T = new String[5][5][10];
-
         int length = 2;
         int maxDepth = 4;
-
-        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
         T = cyk.fillRest(T, length, maxDepth, allChildren);
@@ -161,14 +126,8 @@ public class CykTest {
 
     @Test
     public void topRulesIncludeStartingSymbolWorks() {
-        T = new String[5][5][10];
-
         int length = 2;
         int maxDepth = 4;
-
-        when(grammarMock.getParentsByChild(child)).thenReturn(parentlist);
-        when(grammarMock.getParentsByChild(child2)).thenReturn(parentlist2);
-        when(grammarMock.getRoot()).thenReturn("s");
 
         T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
         T = cyk.fillRest(T, length, maxDepth, allChildren);

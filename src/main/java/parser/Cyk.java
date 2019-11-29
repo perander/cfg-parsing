@@ -1,10 +1,7 @@
 package parser;
 
+import basicdatastructures.List;
 import language.Grammar;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class uses the CYK-algorithm to decide whether a given phrase belongs to a language generated
@@ -38,8 +35,8 @@ public class Cyk implements Parser {
 
         String[] words = phrase.split(" ");
 
-        Set<String> parents = grammar.getAllParents();
-        Set<List<String>> children = grammar.getAllChildren();
+        List<String> parents = grammar.getAllParents();
+        List<List<String>> children = grammar.getAllChildren();
 
         int n = words.length;
         int m = parents.size() + children.size() + 1;
@@ -68,7 +65,7 @@ public class Cyk implements Parser {
      * @param children all symbols in the grammar with at least one parent
      * @param words    array of the individual words in the phrase
      */
-    public String[][][] fillFirstRow(String[][][] t, int length, int maxDepth, Set<List<String>> children, String[] words) {
+    public String[][][] fillFirstRow(String[][][] t, int length, int maxDepth, List<List<String>> children, String[] words) {
         //initial values: words as one row in the table
         for (int i = 0; i < length; i++) {
             t[i][i][0] = words[i];
@@ -82,7 +79,7 @@ public class Cyk implements Parser {
                     continue;
                 }
 
-                List<String> possibleRule = new ArrayList<>();
+                List<String> possibleRule = new List();
                 possibleRule.add(t[i][i][depth]);
 
                 //compare the cell content with every rule (could be optimised by only comparing to the ones with only one element)
@@ -95,7 +92,7 @@ public class Cyk implements Parser {
 
     /**
      * Fill in the rest of the CYK-table. Starting from the row nearest to an already filled one
-     * (starting from {@link #fillFirstRow(String[][][], int, int, Set, String[]) fillFirstRow}).
+     * (starting from {@link #fillFirstRow(String[][][], int, int, List, String[]) fillFirstRow}).
      * <p>
      * Cell by cell, the method forms possible rules from two already filled in cells covering a substring of a given {@code length}.
      * <p>
@@ -110,7 +107,7 @@ public class Cyk implements Parser {
      * @param maxDepth maximum depth of a page, determined by the maximum amount of symbols in the grammar
      * @param children all symbols in the grammar with at least one parent
      */
-    public String[][][] fillRest(String[][][] t, int length, int maxDepth, Set<List<String>> children) {
+    public String[][][] fillRest(String[][][] t, int length, int maxDepth, List<List<String>> children) {
         for (int len = 1; len < length; len++) {
             for (int i = 0; i < length; i++) {
                 for (int j = 0; j < length; j++) {
@@ -118,7 +115,7 @@ public class Cyk implements Parser {
                     for (int page1 = 0; page1 < maxDepth; page1++) {
                         for (int page2 = 0; page2 < maxDepth; page2++) {
                             //fetch the contents of the cells
-                            List<String> possibleRule = new ArrayList<>();
+                            List<String> possibleRule = new List();
                             if (t[i][i + j][page1] != null && t[i + j + 1][i + len][page2] != null) {
                                 possibleRule.add(t[i][i + j][page1]);
                                 possibleRule.add(t[i + j + 1][i + len][page2]);
@@ -145,11 +142,14 @@ public class Cyk implements Parser {
      * @param row          row number
      * @param column       column number
      */
-    public String[][][] search(String[][][] t, List<String> possibleRule, Set<List<String>> children, int row, int column) {
-        for (List<String> rule : children) {
+    public String[][][] search(String[][][] t, List<String> possibleRule, List<List<String>> children, int row, int column) {
+        for (int i = 0; i < children.size(); i++) {
+            List<String> rule = children.get(i);
             if (rule.equals(possibleRule)) {
                 //if found a matching rule, add it's parents to the next empty page corresponding to the cell
-                for (String parent : grammar.getParentsByChild(rule)) {
+                List<String> parents = grammar.getParentsByChild(rule);
+                for (int j = 0; j < parents.size(); j++) {
+                    String parent = parents.get(j);
                     t[row][column][nextEmpty(t, row, column)] = parent;
                 }
             }
@@ -168,7 +168,7 @@ public class Cyk implements Parser {
      * @param children all symbols in the grammar with at least one parent
      * @return true if at least one of the pages includes a starting symbol, false otherwise
      */
-    public boolean topRulesIncludeStartingSymbol(String[][][] t, int length, int maxDepth, Set<String> parents, Set<List<String>> children) {
+    public boolean topRulesIncludeStartingSymbol(String[][][] t, int length, int maxDepth, List<String> parents, List<List<String>> children) {
         String root = grammar.getRoot();
 
         boolean found = false;
