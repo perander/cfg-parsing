@@ -1,26 +1,16 @@
 package parser;
 
+import basicdatastructures.List;
 import language.Rule;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
 public class StateTest {
-    @InjectMocks
     State state;
 
-    @Mock
-    Rule ruleMock;
+    Rule rule;
 
     private String parent;
     private List<String> child;
@@ -29,18 +19,18 @@ public class StateTest {
     public void setup() {
         parent = "s";
 
-        child = new ArrayList<>();
+        child = new List();
         child.add("np");
         child.add("vp");
     }
 
     @Test
     public void getNextElementReturnsTheNextElement() {
-        Mockito.when(ruleMock.getChild()).thenReturn(child);
+        rule = new Rule();
+        rule.setChild(child);
 
-        state = new State(ruleMock, 0, 0);
+        state = new State(rule, 0, 0);
 
-        String next = state.getnextElement();
         assertTrue("np".equals(state.getnextElement()));
 
         state.incrementDot();
