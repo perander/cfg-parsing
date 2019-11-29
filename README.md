@@ -11,7 +11,7 @@ ___
 
 Design & architecture documentation
 
-Testing documentation
+[Testing documentation](./documentation/testing.md)
 
 User manual
 ___
