@@ -1,42 +1,33 @@
 package parser;
 
+import basicdatastructures.List;
+import language.Grammar;
+import language.Rule;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class EarleyTest {
-    /*private State[][] T;
+    private State[][] T;
     private String phrase;
     private String[] words;
 
-    //don't know if this is ideal:D
     private String parent, parent2, parent3;
     private List<String> child, child2, child3;
-    private Set<String> allParents;
-    private Set<List<String>> allChildren;
+    private List<String> allParents;
+    private List<List<String>> allChildren;
     private List<String> parentlist, parentlist2, parentlist3, terminals;
     private List<List<String>> childlist, childlist2, childlist3;
-
-    @InjectMocks
-    Earley earley;
-
-    @Mock
-    Grammar grammarMock;
-
-    @Mock
-    State stateMock;
-
-    @Mock
-    State stateMock2;
-
-    @Mock
-    Rule ruleMock;
-
-    @Mock
-    Rule ruleMock2;
-
-    @Mock
-    Rule ruleMock3;
-
-    @Mock
-    Rule startRuleMock;
+    
+    private Earley earley;
+    private Grammar grammar;
+    private State state;
+    private State state2;
+    private Rule rule;
+    private Rule rule2;
+    private Rule rule3;
+    private Rule startRule;
 
 
     @Before
@@ -46,171 +37,120 @@ public class EarleyTest {
         parent2 = "np";
         parent3 = "vp";
 
-        child = new ArrayList<>();
+        child = new List();
         child.add("np");
         child.add("vp");
 
-        child2 = new ArrayList<>();
+        child2 = new List();
         child2.add("n");
 
-        child3 = new ArrayList<>();
+        child3 = new List();
         child3.add("v");
 
-        parentlist = new ArrayList<>();
+        parentlist = new List();
         parentlist.add(parent);
-        parentlist2 = new ArrayList<>();
+        parentlist2 = new List();
         parentlist2.add(parent2);
-        parentlist3 = new ArrayList<>();
+        parentlist3 = new List();
         parentlist3.add(parent3);
 
-        childlist = new ArrayList<>();
+        childlist = new List();
         childlist.add(child);
-        childlist2 = new ArrayList<>();
+        childlist2 = new List();
         childlist2.add(child2);
-        childlist3 = new ArrayList<>();
+        childlist3 = new List();
         childlist3.add(child3);
 
-        terminals = new ArrayList<>();
+        terminals = new List();
         terminals.add("n");
         terminals.add("v");
 
-        allParents = new HashSet<>();
+        allParents = new List();
         allParents.add(parent);
         allParents.add(parent2);
         allParents.add(parent3);
-        allChildren = new HashSet<>();
+        allChildren = new List();
         allChildren.add(child);
         allChildren.add(child2);
         allChildren.add(child3);
+
+        rule = new Rule();
+        rule2 = new Rule();
+        rule3 = new Rule();
+
+        rule.setParent(parent);
+        rule.setChild(child);
+        rule2.setParent(parent2);
+        rule2.setChild(child2);
+        rule3.setParent(parent3);
+        rule3.setChild(child3);
+
+        grammar = new Grammar();
+        grammar.addRule(rule);
+        grammar.addRule(rule2);
+        grammar.addRule(rule3);
 
         phrase = "n v";
         words = new String[]{"n", "v"};
 
         T = new State[3][3];
-        earley = new Earley(grammarMock);
+        earley = new Earley(grammar);
     }
 
-    /*@Test
+    @Test
     public void belongsToLanguageWorks() {
-        when(grammarMock.getRoot()).thenReturn(parent);
-        when(grammarMock.getTerminals()).thenReturn(terminals);
-
-        when(ruleMock.getParent()).thenReturn(parent);
-        when(ruleMock.getChild()).thenReturn(child);
-        when(ruleMock2.getParent()).thenReturn(parent2);
-        when(ruleMock2.getChild()).thenReturn(child2);
-        when(ruleMock3.getParent()).thenReturn(parent3);
-        when(ruleMock3.getChild()).thenReturn(child3);
-
-        when(startRuleMock.getParent()).thenReturn("start");
-        when(startRuleMock.getChild()).thenReturn(parentlist);
-
-        when(stateMock.getRule()).thenReturn(startRuleMock);
-        when(stateMock.getDot()).thenReturn(0);
-        when(stateMock.getOrigin()).thenReturn(0);
-
-        assertTrue(earley.belongsToLanguage(grammarMock, phrase));
+        assertTrue(earley.belongsToLanguage(grammar, phrase));
     }
 
     @Test
     public void predictWorks() {
-        when(stateMock.getnextElement()).thenReturn(parent2);
-        when(ruleMock.getParent()).thenReturn(parent2);
-        when(ruleMock.getChild()).thenReturn(child2);
+        List<Rule> rules = new List<>();
+        rules.add(rule);
 
-        List<Rule> rules = new ArrayList<>();
-        rules.add(ruleMock);
-
-        when(grammarMock.getRulesByParent(parent2)).thenReturn(rules);
-
-        when(stateMock2.getRule()).thenReturn(ruleMock);
-        when(stateMock2.getDot()).thenReturn(0);
-        when(stateMock2.getOrigin()).thenReturn(0);
+        //state has the dot before the parent of state2 (parent2)
+        state = new State(rule, 0, 0);
+        state2 = new State(rule2, 0, 0);
 
         assertTrue(T[0][0] == null);
 
-        earley.predict(T, stateMock, 0);
+        earley.predict(T, state, 0);
 
         State found = T[0][0];
 
-        assertTrue(stateMock2.getRule().equals(found.getRule()));
-        assertTrue(stateMock2.getOrigin() == found.getOrigin());
-        assertTrue(stateMock2.getDot() == found.getDot());
+        assertTrue(state2.getRule().equals(found.getRule()));
+        assertTrue(state2.getOrigin() == found.getOrigin());
+        assertTrue(state2.getDot() == found.getDot());
     }
 
     @Test
     public void scanWorks() {
-        when(stateMock.getRule()).thenReturn(ruleMock);
-        when(stateMock.getDot()).thenReturn(0);
-        when(stateMock.getOrigin()).thenReturn(0);
-        when(stateMock.getnextElement()).thenReturn("n");
+        state = new State(rule2, 0, 0); //before scan next: n
+        state2 = new State(rule2, 1, 0); //after scan next: null
 
-        when(ruleMock.getParent()).thenReturn(parent2);
-        when(ruleMock.getChild()).thenReturn(child2);
-
-        when(stateMock2.getRule()).thenReturn(ruleMock);
-        when(stateMock2.getDot()).thenReturn(1);
-        when(stateMock2.getOrigin()).thenReturn(0);
-
-        earley.scan(T, stateMock, 0, words);
+        earley.scan(T, state, 0, words);
 
         State found = T[1][0];
 
-        assertTrue(stateMock2.getRule().equals(found.getRule()));
-        assertTrue(stateMock2.getOrigin() == found.getOrigin());
-        assertTrue(stateMock2.getDot() == found.getDot());
-
-        when(stateMock.getnextElement()).thenReturn("v");
-
-        T = new State[words.length + 1][words.length + 1];
-
-        earley.scan(T, stateMock, 0, words);
-        found = T[1][0];
-
-        assertTrue(found == null);
+        assertTrue(state2.getRule().equals(found.getRule()));
+        assertTrue(state2.getOrigin() == found.getOrigin());
+        assertTrue(state2.getDot() == found.getDot());
     }
 
     @Test
     public void completeWorks() {
-        when(ruleMock.getParent()).thenReturn(parent); //s
-        when(ruleMock.getChild()).thenReturn(child); //np vp
+        state = new State(rule, 0, 0); //next np
+        state2 = new State(rule2, 1, 0); // completed state with np as parent
 
-        when(ruleMock2.getParent()).thenReturn(parent2); //np
-        when(ruleMock2.getChild()).thenReturn(child2); //n
+        T[0][0] = state;
 
-        when(stateMock.getRule()).thenReturn(ruleMock);
-        when(stateMock.getDot()).thenReturn(0);
-        when(stateMock.getOrigin()).thenReturn(0);
-        when(stateMock.getnextElement()).thenReturn("np");
+        earley.complete(T, state2, 1);
 
-        when(stateMock2.getRule()).thenReturn(ruleMock2);
-        when(stateMock2.getDot()).thenReturn(1);
-        when(stateMock2.getOrigin()).thenReturn(0);
-
-        T[0][0] = stateMock;
-
-        earley.complete(T, stateMock2, 1);
-
-        when(stateMock.getDot()).thenReturn(1);
+        state.incrementDot();
 
         State found = T[1][0];
 
-        assertTrue(stateMock.getRule().equals(found.getRule()));
-        assertTrue(stateMock.getOrigin() == found.getOrigin());
-        assertTrue(stateMock.getDot() == found.getDot());
+        assertTrue(state.getRule().equals(found.getRule()));
+        assertTrue(state.getOrigin() == found.getOrigin());
+        assertTrue(state.getDot() == found.getDot());
     }
-
-    @Test
-    public void lastCellIncludesCompletedStartStateWorks() {
-
-    }
-
-    @Test
-    public void nextEmptyFindsNextEmptyCell() {
-        assertTrue(0 == earley.nextEmpty(T, 0));
-        T[0][0] = stateMock;
-        assertTrue(1 == earley.nextEmpty(T, 0));
-    }*/
-
-
 }
