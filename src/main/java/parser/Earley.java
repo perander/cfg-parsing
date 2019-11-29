@@ -1,5 +1,6 @@
 package parser;
 
+import basicdatastructures.List;
 import language.Grammar;
 import language.Rule;
 
@@ -45,9 +46,21 @@ public class Earley implements Parser {
     }
 
     /**
+     * Initilises the state array.
+     *
+     * @param words the given phrase as array
+     * @return
+     */
+    public State[][] init(String[] words) {
+        State[][] t = new State[words.length + 1][grammar.getAllParents().size() * grammar.getAllChildren().size()];
+        return t;
+    }
+
+    /**
      * Parses the words-array.
-     * @param t a two-dimensional state array
-     * @param words given phrase as an array
+     *
+     * @param t          a two-dimensional state array
+     * @param words      given phrase as an array
      * @param startState starting state
      * @return the state array after parsing
      */
@@ -58,12 +71,11 @@ public class Earley implements Parser {
             for (State state : t[i]) {
                 if (state != null) {
                     //if state not finished
-                    if (state.getnextElement() != null) {
-                        //if next non-terminal
+                    if (!state.isFinished()) {
                         String next = state.getnextElement();
-                        if (!grammar.getTerminals().contains(next)) {
+                        if (!grammar.getTerminals().contains(next)) { //if next non-terminal
                             t = predict(t, state, i);
-                        } else {
+                        } else { //if next terminal
                             t = scan(t, state, i, words);
                         }
                     } else {
@@ -76,21 +88,10 @@ public class Earley implements Parser {
     }
 
     /**
-     * Initilises the state array.
-     *
-     * @param words the given phrase as array
-     * @return
-     */
-    public State[][] init(String[] words) {
-        State[][] t = new State[words.length + 1][grammar.getAllParents().size() * grammar.getAllChildren().size()];
-        return t;
-    }
-
-    /**
      * Adds the given state to the given column in the state array if it's not yet included.
      *
-     * @param t state array
-     * @param k column number
+     * @param t     state array
+     * @param k     column number
      * @param state given state
      * @return the filled state array
      */
@@ -98,7 +99,7 @@ public class Earley implements Parser {
         int max = t[k].length;
 
         for (int col = 0; col < max; col++) {
-            if (t[k][col] == state) {
+            if (t[k][col] != null && t[k][col].equals(state)) {
                 return t;
             }
         }
@@ -117,14 +118,18 @@ public class Earley implements Parser {
      * Creates a state for each rule with the dot in the beginning (value 0).
      * Adds the states to the column corresponding to the column number k.
      *
-     * @param t state array
+     * @param t     state array
      * @param state given state
-     * @param k column number
+     * @param k     column number
      * @return the state array
      */
     public State[][] predict(State[][] t, State state, int k) {
         String next = state.getnextElement();
-        for (Rule rule : grammar.getRulesByParent(next)) {
+
+        List<Rule> rules = grammar.getRulesByParent(next);
+
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
             State newState = new State(rule, 0, k);
             t = fill(t, k, newState);
         }
@@ -136,17 +141,19 @@ public class Earley implements Parser {
      * If the next element is equal to the k:th word, the state is copied,
      * dot incremented by one, and added to the state array.
      *
-     * @param t state array
+     * @param t     state array
      * @param state given state
-     * @param k column number
+     * @param k     column number
+     * @param k     column number
      * @param words phrase as array
      * @return state array
      */
     public State[][] scan(State[][] t, State state, int k, String[] words) {
         String next = state.getnextElement();
+
         if (k < words.length && next.equals(words[k])) {
-            State newState = new State(state.getRule(), state.getDot(), state.getOrigin());
-            newState.incrementDot();
+            State newState = new State(state.getRule(), state.getDot() + 1, state.getOrigin());
+            //newState.incrementDot();
             t = fill(t, k + 1, newState);
         }
         return t;
@@ -157,16 +164,16 @@ public class Earley implements Parser {
      * which have rules with the completed states parent as the next element.
      * Copies them, increments the dot by one and adds them to the state array.
      *
-     * @param t state array
+     * @param t     state array
      * @param state given state
-     * @param k column number
+     * @param k     column number
      * @return the state array
      */
     public State[][] complete(State[][] t, State state, int k) {
         String parent = state.getRule().getParent();
+
         for (State s : t[state.getOrigin()]) {
-            if (s != null && s.getnextElement() != null
-                    && s.getnextElement().equals(parent)) {
+            if (s != null && s.getnextElement() != null && s.getnextElement().equals(parent)) {
                 State newState = new State(s.getRule(), s.getDot(), s.getOrigin());
                 newState.incrementDot();
                 t = fill(t, k, newState);
@@ -178,8 +185,8 @@ public class Earley implements Parser {
     /**
      * Checks whether the last column includes the completed start state.
      *
-     * @param t state array
-     * @param length word length
+     * @param t          state array
+     * @param length     word length
      * @param startState the start state
      * @return true if the completed start state is found, false if not
      */
