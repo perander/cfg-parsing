@@ -1,23 +1,26 @@
 package language;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import basicdatastructures.List;
+import basicdatastructures.MultiMap;
 
 public class Grammar {
     private List<Rule> rules; //could be a set
 
     //one parent to many children of possibly many elements (S -> NP VP | VP NP)
-    private HashMap<String, List<List<String>>> parentToChild;
+    //private HashMap<String, List<List<String>>> parentToChild;
 
     //possibly many parents to one children of possibly many elements (S -> NP VP, NP -> NP VP)
-    private HashMap<List<String>, List<String>> childToParent;
+    //private HashMap<List<String>, List<String>> childToParent;
+
+    private MultiMap<String, List<String>> parentToChild;
+    private MultiMap<List<String>, String> childToParent;
 
     public Grammar() {
-        this.rules = new ArrayList<>();
-        this.parentToChild = new HashMap<>();
-        this.childToParent = new HashMap<>();
+        this.rules = new List();
+        //this.parentToChild = new HashMap<>();
+        //this.childToParent = new HashMap<>();
+        this.parentToChild = new MultiMap();
+        this.childToParent = new MultiMap();
     }
 
     /**
@@ -34,39 +37,19 @@ public class Grammar {
         return rules;
     }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
-
-    public HashMap<String, List<List<String>>> getParentToChild() {
-        return parentToChild;
-    }
-
-    public void setParentToChild(HashMap<String, List<List<String>>> parentToChild) {
-        this.parentToChild = parentToChild;
-    }
-
-    public HashMap<List<String>, List<String>> getChildToParent() {
-        return childToParent;
-    }
-
-    public void setChildToParent(HashMap<List<String>, List<String>> childToParent) {
-        this.childToParent = childToParent;
-    }
-
-    public Set<String> getAllParents() {
+    public List<String> getAllParents() {
         return this.parentToChild.keySet();
     }
 
-    public Set<List<String>> getAllChildren() {
+    public List<List<String>> getAllChildren() {
         return this.childToParent.keySet();
     }
 
-    public List<List<String>> getChildrenByParent(String parent) {
+    public List getChildrenByParent(String parent) {
         return this.parentToChild.get(parent);
     }
 
-    public List<String> getParentsByChild(List<String> child) {
+    public List getParentsByChild(List<String> child) {
         return this.childToParent.get(child);
     }
 
@@ -77,9 +60,10 @@ public class Grammar {
      * @return list of rules
      */
     public List<Rule> getRulesByParent(String parent) {
-        List<Rule> selected = new ArrayList<>();
+        List<Rule> selected = new List();
 
-        for (Rule rule : rules) {
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
             if (rule.getParent().equals(parent)) {
                 selected.add(rule);
             }
@@ -93,15 +77,21 @@ public class Grammar {
      * @return starting symbol if found, null otherwise
      */
     public String getRoot() {
-        for (String parent : getAllParents()) {
-            List<String> parentAsChild = new ArrayList<>();
+        String root = null;
+
+        List<String> parents = getAllParents();
+        for (int i = 0; i < parents.size(); i++) {
+            String parent = parents.get(i);
+
+            List<String> parentAsChild = new List();
             parentAsChild.add(parent);
 
-            if (this.getParentsByChild(parentAsChild) == null && !partOfChild(parent)) {
-                return parent;
+            if (this.getParentsByChild(parentAsChild).size() == 0 && !partOfChild(parent)) {
+                root = parent;
+                break;
             }
         }
-        return null;
+        return root;
     }
 
     /**
@@ -111,7 +101,9 @@ public class Grammar {
      * @return true if the element is a part of a child, false otherwise.
      */
     private boolean partOfChild(String element) {
-        for (List<String> child : getAllChildren()) {
+        List<List<String>> children = getAllChildren();
+        for (int i = 0; i < children.size(); i++) {
+            List<String> child = children.get(i);
             if (child.contains(element)) {
                 return true;
             }
@@ -125,16 +117,15 @@ public class Grammar {
      * @return a list of terminal symbols
      */
     public List<String> getTerminals() {
-        List<String> terminals = new ArrayList<>();
+        List<String> terminals = new List();
 
-        for (List<String> child : getAllChildren()) {
-            if (child.size() == 1) {
-                if (getChildrenByParent(child.get(0)) == null) {
-                    terminals.add(child.get(0));
-                }
+        List<List<String>> children = getAllChildren();
+        for (int i = 0; i < children.size(); i++) {
+            List<String> child = children.get(i);
+            if (child.size() == 1 && getChildrenByParent(child.get(0)).size() == 0) {
+                terminals.add(child.get(0));
             }
         }
-
         return terminals;
     }
 
@@ -145,13 +136,17 @@ public class Grammar {
      */
     private void updateMapping(Rule rule) {
         /*Collecting children to a parent. There might be many, like N -> fish, N -> robots.
-        The order of the elements of a child matters, that's why using a list.*/
-        this.parentToChild.putIfAbsent(rule.getParent(), new ArrayList<>());
-        this.parentToChild.get(rule.getParent()).add(rule.getChild());
+        The order of the elements of a child matters, that's why using a list.
+        this.parentToChild.putIfAbsent(rule.getParent(), new List());
+        this.parentToChild.get(rule.getParent()).add(rule.getChild());*/
+
+        this.parentToChild.put(rule.getParent(), rule.getChild());
 
         /*Collecting parents to children. There might be many, like N -> fish, V -> fish.
-        Here the order of parents does not matter, but still using a list:d.*/
-        this.childToParent.putIfAbsent(rule.getChild(), new ArrayList<>());
-        this.childToParent.get(rule.getChild()).add(rule.getParent());
+        Here the order of parents does not matter, but still using a list:d.
+        this.childToParent.putIfAbsent(rule.getChild(), new List());
+        this.childToParent.get(rule.getChild()).add(rule.getParent());*/
+
+        this.childToParent.put(rule.getChild(), rule.getParent());
     }
 }

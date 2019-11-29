@@ -1,161 +1,127 @@
 package language;
 
+import basicdatastructures.List;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GrammarTest {
-    private Grammar grammarEmpty;
+    private Grammar grammar;
 
-    @InjectMocks
-    Grammar grammar;
+    private Rule rule1;
+    private Rule rule2;
 
-    @Mock
-    Rule ruleMock;
-
-    @Mock
-    Rule ruleMock2;
+    private String parent1, parent2;
+    private List<String> child1, child2;
 
     @Before
     public void setup() {
-        grammarEmpty = new Grammar();
         grammar = new Grammar();
 
-        ruleMock = Mockito.mock(Rule.class);
+        parent1 = "s";
+        parent2 = "np";
 
-        String parent = "s";
+        child1 = new List<>();
+        child1.add("np");
+        child1.add("vp");
 
-        List<String> child = new ArrayList<>();
-        child.add("np");
-        child.add("vp");
-
-        Mockito.when(ruleMock.getParent()).thenReturn(parent);
-        Mockito.when(ruleMock.getChild()).thenReturn(child);
-
-        ruleMock2 = Mockito.mock(Rule.class);
-
-        String parent2 = "np";
-
-        List<String> child2 = new ArrayList<>();
+        child2 = new List<>();
         child2.add("n");
 
-        Mockito.when(ruleMock2.getParent()).thenReturn(parent2);
-        Mockito.when(ruleMock2.getChild()).thenReturn(child2);
+        rule1 = new Rule();
+        rule1.setParent(parent1);
+        rule1.setChild(child1);
+
+        rule2 = new Rule();
+        rule2.setParent(parent2);
+        rule2.setChild(child2);
     }
 
     @Test
     public void addRuleAddsRule() {
-        grammar.addRule(ruleMock);
-        List<Rule> rules = grammar.getRules();
+        assertTrue(0 == grammar.getRules().size());
 
-        String parent = "s";
-
-        List<String> child = new ArrayList<>();
-        child.add("np");
-        child.add("vp");
+        grammar.addRule(rule1);
 
         assertTrue(1 == grammar.getRules().size());
 
-        Rule rule = rules.get(0);
+        Rule rule = grammar.getRules().get(0);
 
-        assertTrue(ruleMock.equals(rule));
-
-        assertTrue(parent.equals(rule.getParent()));
-        assertTrue(child.equals(rule.getChild()));
+        assertTrue(parent1.equals(rule.getParent()));
+        assertTrue(child1.equals(rule.getChild()));
     }
 
     @Test
     public void getParentsByChildReturnsCorrectParents() {
-        grammar.addRule(ruleMock);
-        grammar.addRule(ruleMock2);
+        assertTrue(grammar.getParentsByChild(child1).size() == 0);
 
-        String parent = "s";
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
 
-        List<String> child = new ArrayList<>();
-        child.add("np");
-        child.add("vp");
+        assertTrue(grammar.getParentsByChild(child1).size() == 1);
+        assertTrue(grammar.getParentsByChild(child1).contains(parent1));
+        assertTrue(grammar.getParentsByChild(child2).size() == 1);
+        assertTrue(grammar.getParentsByChild(child2).contains(parent2));
 
-        assertTrue(grammar.getParentsByChild(child).size() == 1);
-        assertTrue(grammar.getParentsByChild(child).contains(parent));
-    }
+        List<String> parentAsChild = new List<>();
+        parentAsChild.add(parent1);
 
-    @Test
-    public void getParentsByChildReturnsNullWhenNoParents() {
-        grammar.addRule(ruleMock);
-        grammar.addRule(ruleMock2);
-
-        List<String> child = new ArrayList<>();
-        child.add("s");
-
-        assertTrue(grammar.getParentsByChild(child) == null);
-    }
-
-    @Test
-    public void addRuleUpdatesMapping() {
-        grammar.addRule(ruleMock);
-
-        Mockito.verify(ruleMock, Mockito.times(3)).getParent();
-        Mockito.verify(ruleMock, Mockito.times(3)).getChild();
+        assertTrue(grammar.getParentsByChild(parentAsChild).size() == 0);
     }
 
     @Test
     public void getRootReturnsStartingSymbol() {
-        String root = "s";
+        grammar.addRule(rule2);
 
-        grammar.addRule(ruleMock);
-        grammar.addRule(ruleMock2);
+        assertTrue(parent2.equals(grammar.getRoot()));
 
-        assertTrue(root.equals(grammar.getRoot()));
-    }
+        grammar.addRule(rule1);
 
-    @Test
-    public void getParentsReturnsAllParents() {
-        grammar.addRule(ruleMock);
-        grammar.addRule(ruleMock2);
-
-        String parent = "s";
-        String parent2 = "np";
-
-        assertTrue(grammar.getAllParents().size() == 2);
-        assertTrue(grammar.getAllParents().contains(parent));
-        assertTrue(grammar.getAllParents().contains(parent2));
+        assertTrue(parent1.equals(grammar.getRoot()));
     }
 
     @Test
     public void getTerminalsReturnsTerminals() {
-        List<String> terminals = new ArrayList<>();
+        List<String> terminals = new List<>();
         terminals.add("n");
         terminals.add("vp");
 
-        grammar.addRule(ruleMock);
-        grammar.addRule(ruleMock2);
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
 
         assertTrue(grammar.getTerminals().contains("n"));
         assertTrue(!grammar.getTerminals().contains("np"));
     }
 
     @Test
-    public void getRulesByParent() {
-        List<Rule> rules;
-        String parent = "n";
+    public void getParentsReturnsAllParents() {
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
 
-        Mockito.when(ruleMock.getParent()).thenReturn(parent);
-
-        grammar.addRule(ruleMock);
-
-        rules = grammar.getRulesByParent(parent);
-
-        assertTrue(rules.size() == 1);
+        assertTrue(grammar.getAllParents().size() == 2);
+        assertTrue(grammar.getAllParents().contains(parent1));
+        assertTrue(grammar.getAllParents().contains(parent2));
     }
 
+    @Test
+    public void getChildrenReturnsAllChildren() {
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
+
+        assertTrue(grammar.getAllChildren().size() == 2);
+        assertTrue(grammar.getAllChildren().contains(child1));
+        assertTrue(grammar.getAllChildren().contains(child2));
+    }
+
+    @Test
+    public void getRulesByParent() {
+        grammar.addRule(rule1);
+        grammar.addRule(rule2);
+
+        List<Rule> rules;
+        rules = grammar.getRulesByParent(parent1);
+        assertTrue(rules.size() == 1);
+        assertTrue(rules.contains(rule1));
+    }
 }
