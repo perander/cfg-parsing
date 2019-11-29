@@ -29,6 +29,12 @@ public class State {
         return Objects.hash(rule, dot, origin);
     }
 
+    /**
+     * Create a new state.
+     * @param rule
+     * @param dot
+     * @param origin
+     */
     public State(Rule rule, int dot, int origin) {
         this.rule = rule;
         this.dot = dot;
@@ -47,16 +53,8 @@ public class State {
         return dot;
     }
 
-    public void setDot(int dot) {
-        this.dot = dot;
-    }
-
     public int getOrigin() {
         return origin;
-    }
-
-    public void setOrigin(int origin) {
-        this.origin = origin;
     }
 
     public void incrementDot() {
@@ -68,6 +66,14 @@ public class State {
             return getRule().getChild().get(getDot());
         }
         return null;
+    }
+
+    /**
+     * Checks whether the state is finished, so whether the state has a next element.
+     * @return true if there is no next element, false otherwise
+     */
+    public boolean isFinished() {
+        return this.getnextElement() == null;
     }
 
     @Override
