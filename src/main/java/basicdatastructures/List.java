@@ -3,52 +3,62 @@ package basicdatastructures;
 /**
  * Basic implementation of a list of objects.
  */
-public class List {
-    private Object[] content;
+public class List<T> {
+    private int space; //full size (content + empty cells)
+    private int size; //only content
+    private Object[] table;
 
     /**
      * Creates an empty List of length 5.
      */
     public List() {
-        this.content = new Object[5];
+        this.space = 10;
+        this.table = new Object[space];
+        this.size = 0;
     }
 
     /**
-     * Returns the size of the list: the part of the array with actual content
+     * Return the object in the cell at position i in the able
      *
-     * @return the index of the first null item of the array. Because of the indexing starting from 0, the size will be correct this way.
+     * @param i position of the cell
+     * @return the object found in the cell
+     */
+    @SuppressWarnings("unchecked")
+    public T get(int i) {
+        return (T) table[i];
+    }
+
+    /**
+     * Returns the size of the list: the number of cells with actual content
+     *
+     * @return number of cells with content
      */
     public int size() {
-        for (int i = 0; i < content.length; i++) {
-            if (content[i] == null) {
-                return i;
-            }
-        }
-        return -1;
+        return size;
     }
 
     /**
-     * Add a new object to the list. If the array is already full, it is copied to a new array with 5 empty items in the end.
-     * This array or the original with empty items left is then filled with the new object.
+     * Add a new object to the list. If the array is already full, it is copied to a new array with 2 times as many cells as the original one.
+     * The more additions there are, the less often the table needs to be expanded.
+     * The less additions there are, the less the space will increase every time it is expanded.
+     * <p>
+     * The new object is then added to the first null cell of the (possibly updated) table.
      *
      * @param o object to be added
      */
-    public void add(Object o) {
-        if (content[content.length - 1] != null) {
-            Object[] copyContent = content;
-            content = new Object[copyContent.length + 5];
+    public void add(T o) {
+        if (space == size) {
+            Object[] copyContent = new Object[2 * space];
 
-            for (int i = 0; i < copyContent.length - 1; i++) {
-                content[i] = copyContent[i];
+            for (int i = 0; i < space; i++) {
+                copyContent[i] = table[i];
             }
+            table = copyContent;
+            space = 2 * space;
         }
 
-        for (int i = 0; i < content.length; i++) {
-            if (content[i] == null) {
-                content[i] = o;
-            }
-        }
-
+        table[size] = o;
+        size++;
     }
 
     /**
@@ -57,14 +67,41 @@ public class List {
      * @param o the given object
      * @return true if the array contains the object, false otherwise.
      */
-    public boolean contains(Object o) {
-        for (int i = 0; i < content.length; i++) {
-            if (content[i] == o) {
+    public boolean contains(T o) {
+        if(size == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (table[i] == o) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Returns a String representing the content of the table.
+     *
+     * @return a String with the contents of the table separated by a space
+     */
+    public String toString() {
+        String s = "[";
+        for (int i = 0; i < size; i++) {
+            s += table[i] + " ";
+        }
+        s += "]";
+        return s;
+    }
 
+    /**
+     * Add an object to the list only if the list does not yet contain it.
+     *
+     * @param value
+     */
+    public void addIfAbsent(T value) {
+        if (!this.contains(value)) {
+            this.add(value);
+        }
+    }
 }
