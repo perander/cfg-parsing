@@ -1,20 +1,21 @@
+
 package language;
 
-import java.util.ArrayList;
-import java.util.List;
+import basicdatastructures.List;
+
 import java.util.Objects;
 
 public class Rule {
 
     private String parent;
-    private List<String> child;
+    private List child;
 
     public Rule() {
     }
 
     public Rule(String parent, String... child) {
         this.parent = parent;
-        this.child = new ArrayList<>();
+        this.child = new List<String>();
         for (String element : child) {
             this.child.add(element);
         }
@@ -49,6 +50,7 @@ public class Rule {
                 Objects.equals(child, rule.child);
     }
 
+    //TODO: keksi ite
     @Override
     public int hashCode() {
         return Objects.hash(parent, child);

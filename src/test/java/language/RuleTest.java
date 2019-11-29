@@ -1,10 +1,9 @@
 package language;
 
+import basicdatastructures.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class RuleTest {
@@ -12,7 +11,7 @@ public class RuleTest {
     private Rule ruleGiven;
     private Rule ruleEmpty;
     private String parent;
-    private List<String> child = new ArrayList<>();
+    private List<String> child = new List();
 
     @Before
     public void setupRule() {
