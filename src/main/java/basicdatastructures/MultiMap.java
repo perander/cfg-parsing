@@ -8,8 +8,8 @@ package basicdatastructures;
  * @param <V> type of value
  */
 public class MultiMap<K, V> {
-    int n;
-    int size;
+    private int n;
+    private int size;
     private List<K>[] keys;
     private List<V>[] values;
 

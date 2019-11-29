@@ -80,4 +80,22 @@ public class MultiMapTest {
 
         assertTrue(map.valueSet().size()==2 && map.valueSet().contains(1) && map.valueSet().contains(2));
     }
+
+    @Test
+    public void sizeReturnsTheMapSize() {
+        assertTrue(map.size() == 0);
+
+        map.put("one", 1);
+
+        assertTrue(map.size() == 1);
+
+        map.put("one", 2);
+
+        assertTrue(map.size() == 2);
+
+        map.put("one", 2);
+
+        assertTrue(map.size() == 3);
+    }
+
 }
