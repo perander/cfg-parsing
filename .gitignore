@@ -1,0 +1,10 @@
+# Ignore any logs
+**/logs
+
+# Intellij
+.idea
+
+# Gradle
+.gradle/
+build/
+
