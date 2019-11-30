@@ -2,7 +2,7 @@
 
 ### Week 5
 
-This is the first week of performance testing. I tested both algorithms with a fairly small input, but the Earley parser is already somewhat faster than Cyk.
+This is the first week of performance testing. I tested both algorithms with a fairly small input, but the Earley parser is already somewhat faster than CYK.
 
 I tested the algorithms in separate classes (both in package `efficiencytesting`), since i read that the state of the processor or the JVM could have an effect on performance if the tests would be done during the same run.
 
