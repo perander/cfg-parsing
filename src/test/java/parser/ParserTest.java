@@ -17,7 +17,6 @@ public class ParserTest {
     @Before
     public void setup() {
         ui = new UserInterface();
-        grammar = new Grammar();
         ruleAsString = "s np vp:vp v np:vp vp adv:vp v:np n:v fish:n fish:n robots:adv today-robots fish fish today";
         ruleAsString2 = "s np vp:vp v np:vp v:np n:v fish:n fish:n robots-fish fish";
         ruleAsString3 = "s np vp:vp v:np n:v fish:n fish-fish fish";
@@ -40,7 +39,7 @@ public class ParserTest {
         String[] rules = input.split("-")[0].split(":");
 
         for (String rule : rules) {
-            grammar.addRule(ui.prepareRule(rule));
+            grammar.addRule(ui.validator.prepareRule(rule));
         }
         return grammar;
     }

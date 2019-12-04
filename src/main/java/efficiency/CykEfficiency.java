@@ -1,4 +1,4 @@
-package efficiencytesting;
+package efficiency;
 
 import language.Grammar;
 import parser.Cyk;
@@ -16,7 +16,7 @@ public class CykEfficiency  {
         String[] rules = ruleAsString.split("-")[0].split(":");
 
         for (String rule : rules) {
-            grammar.addRule(ui.prepareRule(rule));
+            grammar.addRule(ui.validator.prepareRule(rule));
         }
 
         Parser cyk = new Cyk(grammar);
