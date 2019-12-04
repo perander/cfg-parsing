@@ -7,13 +7,13 @@ First I want to simply use the algorithms as deciders and compare their time and
 This is a gradle project written in Java. You can create a test coverage report for the project with `gradle jacocoTestReport`.
 ___
 ### Documentation
-[Requirements documentation](./documentation/requirements.md)
+[Project specification](./documentation/requirements.md)
 
-Design & architecture documentation
+[Implementation document](./documentation/implementation.md)
 
-[Testing documentation](./documentation/testing.md)
+[Testing document](./documentation/testing.md)
 
-User manual
+User guide
 ___
 ### Weekly reports
 [Week 1](./documentation/weeklyreports/weeklyreport1.md)
