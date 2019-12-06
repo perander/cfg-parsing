@@ -13,7 +13,7 @@ ___
 
 [Testing document](./documentation/testing.md)
 
-User guide
+[User guide](./documentation/userguide.md)
 ___
 ### Weekly reports
 [Week 1](./documentation/weeklyreports/weeklyreport1.md)
@@ -25,3 +25,5 @@ ___
 [Week 4](./documentation/weeklyreports/weeklyreport4.md)
 
 [Week 5](./documentation/weeklyreports/weeklyreport5.md)
+
+[Week 6](./documentation/weeklyreports/weeklyreport6.md)
