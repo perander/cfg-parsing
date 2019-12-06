@@ -43,7 +43,7 @@ public class MultiMap<K, V> {
     private int hash(Object key) {
         int s = key.hashCode();
         s = s % n;
-        return s;
+        return Math.abs(s);
     }
 
     /**

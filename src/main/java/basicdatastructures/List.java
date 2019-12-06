@@ -1,5 +1,8 @@
 package basicdatastructures;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Basic implementation of a list of objects.
  */
@@ -68,12 +71,12 @@ public class List<T> {
      * @return true if the array contains the object, false otherwise.
      */
     public boolean contains(T o) {
-        if(size == 0) {
+        if (size == 0) {
             return false;
         }
 
         for (int i = 0; i < size; i++) {
-            if (table[i] == o) {
+            if (table[i].equals(o) || table[i] == o) {
                 return true;
             }
         }
@@ -103,5 +106,25 @@ public class List<T> {
         if (!this.contains(value)) {
             this.add(value);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        List<?> list = (List<?>) o;
+        return size == list.size &&
+                Arrays.equals(table, list.table);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(size);
+        result = 31 * result + Arrays.hashCode(table);
+        return result;
     }
 }
