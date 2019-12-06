@@ -1,5 +1,9 @@
 ### Weekly report 3
 
+####TODO
+- checkstyle
+- enum parsers (for two parsers:D)
+- package structure: src.main.java.cfg-parsing.language etc (the project name included)
 
 #### What did I do? What's new in the program?
 - I refactored the previous weeks code so that the rules, the grammar and the parser are now represented as classes.
@@ -28,4 +32,4 @@ Since I will implement another parser in the future, I thought an interface woul
 #### Time spent
 | mon | tue | wed | thu | fri | sat | sun | **Total**
 |--- | --- | --- | --- | --- | --- | --- | ---
-|    |  3h |     | 4h  |     |     |  3h |     
+|    |  3h |     | 4h  |     |     |  3h |   10h 

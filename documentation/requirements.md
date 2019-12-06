@@ -29,7 +29,7 @@
   - In Chomsky normal form (either required or transforming any other form)
     - Need to verify the correct form
   - Strings saved in a hashmap (probably)
-  - Grammar given to the parsers first, then parsing the input text
+  - language.Grammar given to the parsers first, then parsing the input text
 - Text to be parsed
   - As simple strings
   - As a text file

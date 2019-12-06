@@ -30,4 +30,4 @@ I decided to test the parsers in separate runnable classes so that state of the 
 - https://materiaalit.github.io/intro-to-ai/part5/, part 2.3.
 - https://en.wikipedia.org/wiki/CYK_algorithm
 - https://en.wikipedia.org/wiki/Earley_parser
-
+- https://en.wikipedia.org/wiki/Chomsky_normal_form

@@ -63,10 +63,17 @@ public class UserInterface {
             }
 
             Rule rule = validator.prepareRule(s);
-
             //validate (chomsky normal form: max 2 child elements)
 
+            if (!validator.validateRule(rule)) {
+                System.out.println("rule is too long");
+            }
+
             grammar.addRule(rule);
+        }
+
+        if (!validator.validateChomsky(grammar)) {
+            System.out.println("the grammar was not in Chomsky normal form");
         }
 
         System.out.println("Give a sentence:");

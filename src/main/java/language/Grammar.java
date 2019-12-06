@@ -45,7 +45,7 @@ public class Grammar {
         return this.childToParent.keySet();
     }
 
-    public List getChildrenByParent(String parent) {
+    public List<List<String>> getChildrenByParent(String parent) {
         return this.parentToChild.get(parent);
     }
 
@@ -118,8 +118,8 @@ public class Grammar {
      */
     public List<String> getTerminals() {
         List<String> terminals = new List();
+        List<List<String>> children = this.getAllChildren();
 
-        List<List<String>> children = getAllChildren();
         for (int i = 0; i < children.size(); i++) {
             List<String> child = children.get(i);
             if (child.size() == 1 && getChildrenByParent(child.get(0)).size() == 0) {
