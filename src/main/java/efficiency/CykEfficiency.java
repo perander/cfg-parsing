@@ -5,7 +5,7 @@ import parser.Cyk;
 import parser.Parser;
 import ui.UserInterface;
 
-public class CykEfficiency  {
+public class CykEfficiency {
     public static void main(String... args) {
         UserInterface ui = new UserInterface();
         String ruleAsString = "s np vp:vp v np:vp vp adv:vp v:np n:v fish:n fish:n robots:adv today-robots fish fish today";
@@ -26,6 +26,6 @@ public class CykEfficiency  {
         long end = System.nanoTime();
 
         System.out.println("The phrase belongs to the language: " + belongs);
-        System.out.println("Took " + ((end-start)/1e9) + "s");
+        System.out.println("Took " + ((end - start) / 1e9) + "s");
     }
 }

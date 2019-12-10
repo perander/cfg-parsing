@@ -119,11 +119,10 @@ public class Cyk implements Parser {
                             if (t[i][i + j][page1] != null && t[i + j + 1][i + len][page2] != null) {
                                 possibleRule.add(t[i][i + j][page1]);
                                 possibleRule.add(t[i + j + 1][i + len][page2]);
-                            } else {
-                                continue;
+
+                                //compare the cell content with every rule (could be optimised by only comparing to the ones with only two elements)
+                                t = search(t, possibleRule, children, i, i + len);
                             }
-                            //compare the cell content with every rule (could be optimised by only comparing to the ones with only two elements)
-                            t = search(t, possibleRule, children, i, i + len);
                         }
                     }
                 }

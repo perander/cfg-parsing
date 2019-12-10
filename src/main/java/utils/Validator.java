@@ -8,7 +8,7 @@ public class Validator {
 
     /**
      * Checks whether the given grammar is in the Chomsky normal form.
-     *
+     * <p>
      * This requires that each rule has 1 or 2 children: either two non-terminal children or one terminal child.
      * There should not be rules with no children.
      *
@@ -26,27 +26,39 @@ public class Validator {
 
             List<String> child = rule.getChild();
 
-            //rule too long
-            if (child.size() > 2){
-                System.out.println("too long: " + child);
-                return false;
-            }
-
-            //mixing terminals and non-terminals
-            if (child.size() > 1) {
-                if ((terminals.contains(child.get(0)) && parents.contains(child.get(1))) ||
-                        (parents.contains(child.get(0)) && terminals.contains(child.get(1)))) {
-                    System.out.println("mixing terminals and non-terminals: " + child);
-                    return false;
-                }
-            }
-
-            //more than one terminal in a row
-            if (terminals.contains(child.get(0)) && child.size() != 1) {
+            if (childTooLong(child) || mixedTerminals(child, terminals, parents) || tooManyTerminals(child, terminals)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean tooManyTerminals(List<String> child, List<String> terminals) {
+        //more than one terminal in a row
+        if (terminals.contains(child.get(0)) && child.size() != 1) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean childTooLong(List<String> child) {
+        if (child.size() > 2) {
+            System.out.println("too long: " + child);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean mixedTerminals(List<String> child, List<String> terminals, List<String> parents) {
+        //mixing terminals and non-terminals
+        if (child.size() > 1) {
+            if ((terminals.contains(child.get(0)) && parents.contains(child.get(1))) ||
+                    (parents.contains(child.get(0)) && terminals.contains(child.get(1)))) {
+                System.out.println("mixing terminals and non-terminals: " + child);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -121,7 +133,7 @@ public class Validator {
      * @param child
      * @return
      */
-    public Rule prepareNewRule(String parent, String child){
+    public Rule prepareNewRule(String parent, String child) {
         Rule rule = new Rule();
         List<String> elements = new List();
         String[] childElements = child.split(" ");

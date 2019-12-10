@@ -29,7 +29,6 @@ public class ValidatorTest {
                 "n -> fish:" +
                 "np -> fish s fish";
 
-
         //incorrect input: mixing terminals and non-terminals
         ruleAsString2 = "s -> np vp:" +
                 "vp -> v:" +
@@ -74,7 +73,7 @@ public class ValidatorTest {
         boolean works = true;
 
         for (int i = 0; i < rules.size(); i++) {
-            if(!validator.validateRule(rules.get(i))) {
+            if (!validator.validateRule(rules.get(i))) {
                 works = false;
             }
         }

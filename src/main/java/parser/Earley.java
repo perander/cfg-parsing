@@ -195,10 +195,7 @@ public class Earley implements Parser {
         State completed = new State(startState.getRule(), startState.getDot(), startState.getOrigin());
         completed.incrementDot();
 
-        System.out.println("goal: " + completed);
-
         for (State state : t[length]) {
-            System.out.println("found: " + state);
             if (state != null && state.equals(completed)) {
                 found = true;
                 break;
