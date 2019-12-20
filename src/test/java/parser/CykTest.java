@@ -11,9 +11,8 @@ import static org.junit.Assert.assertTrue;
 
 public class CykTest {
 
-    private String[][][] T;
-    private String phrase;
-    private String[] words;
+    private String[][][] t;
+    private String[] phrase;
 
     private String parent, parent2;
     private List<String> child, child2;
@@ -21,16 +20,16 @@ public class CykTest {
     private List<List<String>> allChildren;
     private List<String> parentlist, parentlist2;
     private List<List<String>> childlist, childlist2;
-    
+
     private Cyk cyk;
     private Grammar grammar = new Grammar();
     private Rule rule1 = new Rule();
     private Rule rule2 = new Rule();
-    
-    
+
+
     @Before
     public void setup() {
-        T = new String[5][5][10];
+        t = new String[5][5][10];
         //make phrase
         parent = "s";
         parent2 = "np";
@@ -64,8 +63,7 @@ public class CykTest {
         allChildren.add(child);
         allChildren.add(child2);
 
-        phrase = "n vp";
-        words = new String[]{"n", "vp"};
+        phrase = new String[]{"n", "vp"};
 
         grammar.addRule(rule1);
         grammar.addRule(rule2);
@@ -77,7 +75,7 @@ public class CykTest {
     public void belongsToLanguageWorks() {
         assertTrue(cyk.belongsToLanguage(grammar, phrase));
 
-        phrase = "n n";
+        phrase = new String[]{"n", "n"};
 
         assertFalse(cyk.belongsToLanguage(grammar, phrase));
     }
@@ -88,10 +86,10 @@ public class CykTest {
         possibleRule.add("np");
         possibleRule.add("vp");
 
-        T = cyk.search(T, possibleRule, allChildren, 0, 0);
+        t = cyk.search(t, possibleRule, allChildren, 0, 0);
 
-        assertTrue(T[0][0][0].equals("s"));
-        assertTrue(T[0][0][1] == null);
+        assertTrue(t[0][0][0].equals("s"));
+        assertTrue(t[0][0][1] == null);
     }
 
 
@@ -100,12 +98,12 @@ public class CykTest {
         int length = 2;
         int maxDepth = 4;
 
-        T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
+        t = cyk.fillFirstRow(t, length, maxDepth, allChildren, phrase);
 
-        assertTrue(T[0][0][0].equals("n"));
-        assertTrue(T[0][0][1].equals("np"));
-        assertTrue(T[1][1][0].equals("vp"));
-        assertTrue(T[1][1][1] == null);
+        assertTrue(t[0][0][0].equals("n"));
+        assertTrue(t[0][0][1].equals("np"));
+        assertTrue(t[1][1][0].equals("vp"));
+        assertTrue(t[1][1][1] == null);
     }
 
     @Test
@@ -113,15 +111,15 @@ public class CykTest {
         int length = 2;
         int maxDepth = 4;
 
-        T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
-        T = cyk.fillRest(T, length, maxDepth, allChildren);
+        t = cyk.fillFirstRow(t, length, maxDepth, allChildren, phrase);
+        t = cyk.fillRest(t, length, maxDepth, allChildren);
 
-        assertTrue(T[0][0][0].equals("n"));
-        assertTrue(T[0][0][1].equals("np"));
-        assertTrue(T[1][1][0].equals("vp"));
-        assertTrue(T[1][1][1] == null);
+        assertTrue(t[0][0][0].equals("n"));
+        assertTrue(t[0][0][1].equals("np"));
+        assertTrue(t[1][1][0].equals("vp"));
+        assertTrue(t[1][1][1] == null);
 
-        assertTrue(T[0][1][0].equals("s"));
+        assertTrue(t[0][1][0].equals("s"));
     }
 
     @Test
@@ -129,27 +127,27 @@ public class CykTest {
         int length = 2;
         int maxDepth = 4;
 
-        T = cyk.fillFirstRow(T, length, maxDepth, allChildren, words);
-        T = cyk.fillRest(T, length, maxDepth, allChildren);
+        t = cyk.fillFirstRow(t, length, maxDepth, allChildren, phrase);
+        t = cyk.fillRest(t, length, maxDepth, allChildren);
 
-        assertTrue(T[0][0][0].equals("n"));
-        assertTrue(T[0][0][1].equals("np"));
-        assertTrue(T[1][1][0].equals("vp"));
-        assertTrue(T[1][1][1] == null);
+        assertTrue(t[0][0][0].equals("n"));
+        assertTrue(t[0][0][1].equals("np"));
+        assertTrue(t[1][1][0].equals("vp"));
+        assertTrue(t[1][1][1] == null);
 
-        assertTrue(T[0][1][0].equals("s"));
+        assertTrue(t[0][1][0].equals("s"));
 
-        boolean found = cyk.topRulesIncludeStartingSymbol(T, 2, 10, allParents, allChildren);
+        boolean found = cyk.topRulesIncludeStartingSymbol(t, 2, 10, allParents, allChildren);
 
         assertTrue(found);
     }
 
     @Test
     public void nextEmptyFindsNextEmptyCell() {
-        assertTrue(0 == cyk.nextEmpty(T, 0, 0));
+        assertTrue(0 == cyk.nextEmpty(t, 0, 0));
 
-        T[0][0][0] = "s";
+        t[0][0][0] = "s";
 
-        assertTrue(1 == cyk.nextEmpty(T, 0, 0));
+        assertTrue(1 == cyk.nextEmpty(t, 0, 0));
     }
 }

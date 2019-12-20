@@ -9,9 +9,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public class EarleyTest {
-    private State[][] T;
-    private String phrase;
-    private String[] words;
+    private State[][] t;
+    private String[] phrase;
 
     private String parent, parent2, parent3;
     private List<String> child, child2, child3;
@@ -19,7 +18,7 @@ public class EarleyTest {
     private List<List<String>> allChildren;
     private List<String> parentlist, parentlist2, parentlist3, terminals;
     private List<List<String>> childlist, childlist2, childlist3;
-    
+
     private Earley earley;
     private Grammar grammar;
     private State state;
@@ -90,10 +89,9 @@ public class EarleyTest {
         grammar.addRule(rule2);
         grammar.addRule(rule3);
 
-        phrase = "n v";
-        words = new String[]{"n", "v"};
+        phrase = new String[]{"n", "v"};
 
-        T = new State[3][3];
+        t = new State[3][3];
         earley = new Earley(grammar);
     }
 
@@ -111,11 +109,11 @@ public class EarleyTest {
         state = new State(rule, 0, 0);
         state2 = new State(rule2, 0, 0);
 
-        assertTrue(T[0][0] == null);
+        assertTrue(t[0][0] == null);
 
-        earley.predict(T, state, 0);
+        earley.predict(t, state, 0);
 
-        State found = T[0][0];
+        State found = t[0][0];
 
         assertTrue(state2.getRule().equals(found.getRule()));
         assertTrue(state2.getOrigin() == found.getOrigin());
@@ -127,9 +125,9 @@ public class EarleyTest {
         state = new State(rule2, 0, 0); //before scan next: n
         state2 = new State(rule2, 1, 0); //after scan next: null
 
-        earley.scan(T, state, 0, words);
+        earley.scan(t, state, 0, phrase);
 
-        State found = T[1][0];
+        State found = t[1][0];
 
         assertTrue(state2.getRule().equals(found.getRule()));
         assertTrue(state2.getOrigin() == found.getOrigin());
@@ -141,13 +139,13 @@ public class EarleyTest {
         state = new State(rule, 0, 0); //next np
         state2 = new State(rule2, 1, 0); // completed state with np as parent
 
-        T[0][0] = state;
+        t[0][0] = state;
 
-        earley.complete(T, state2, 1);
+        earley.complete(t, state2, 1);
 
         state.incrementDot();
 
-        State found = T[1][0];
+        State found = t[1][0];
 
         assertTrue(state.getRule().equals(found.getRule()));
         assertTrue(state.getOrigin() == found.getOrigin());

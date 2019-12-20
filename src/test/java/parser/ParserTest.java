@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ParserTest {
     private Grammar grammar, grammar2, grammar3;
-    private String phrase, phrase2, phrase3;
+    private String[] phrase, phrase2, phrase3;
     private String ruleAsString, ruleAsString2, ruleAsString3;
 
     private UserInterface ui;
@@ -17,13 +17,13 @@ public class ParserTest {
     @Before
     public void setup() {
         ui = new UserInterface();
-        ruleAsString = "s np vp:vp v np:vp vp adv:vp v:np n:v fish:n fish:n robots:adv today-robots fish fish today";
-        ruleAsString2 = "s np vp:vp v np:vp v:np n:v fish:n fish:n robots-fish fish";
-        ruleAsString3 = "s np vp:vp v:np n:v fish:n fish-fish fish";
+        ruleAsString = "s -> np vp:vp -> v np | vp adv | v:np -> n:v -> fish:n -> fish | robots:adv -> today_robots fish fish today";
+        ruleAsString2 = "s -> np vp:vp -> v np | v:np -> n:v -> fish:n -> fish | robots_fish fish";
+        ruleAsString3 = "s -> np vp:vp -> v:np -> n:v -> fish:n -> fish_fish fish";
 
-        phrase = parsePhrase(ruleAsString);
-        phrase2 = parsePhrase(ruleAsString2);
-        phrase3 = parsePhrase(ruleAsString3);
+        phrase = ui.validator.preparePhrase(parsePhrase(ruleAsString));
+        phrase2 = ui.validator.preparePhrase(parsePhrase(ruleAsString2));
+        phrase3 = ui.validator.preparePhrase(parsePhrase(ruleAsString3));
 
         grammar = parseGrammar(ruleAsString);
         grammar2 = parseGrammar(ruleAsString2);
@@ -31,15 +31,16 @@ public class ParserTest {
     }
 
     private String parsePhrase(String input) {
-        return input.split("-")[1];
+        return input.split("_")[1];
     }
 
     private Grammar parseGrammar(String input) {
         Grammar grammar = new Grammar();
-        String[] rules = input.split("-")[0].split(":");
+        String grammarUnparsed = input.split("_")[0];
+        String[] rules = grammarUnparsed.split(":");
 
         for (String rule : rules) {
-            grammar.addRule(ui.validator.prepareRule(rule));
+            ui.validator.prepareRule(rule, grammar);
         }
         return grammar;
     }
