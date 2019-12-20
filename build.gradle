@@ -32,9 +32,13 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 checkstyleMain {
-    source ='src/main/java'
+    source = 'src/main/java'
 }
 
-run{
+run {
     standardInput = System.in
+}
+
+checkstyle {
+    configDir = file("${rootProject.projectDir}/config/checkstyle")
 }

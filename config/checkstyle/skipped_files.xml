@@ -6,4 +6,6 @@
 
 <suppressions>
     <suppress files="cfg-parsing.src.main.java.Main.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="cfg-parsing.src.main.java.ui.UserInterface.java" checks="MethodLength"/>
+    <suppress files="cfg-parsing.src.test" checks="MethodLength"/>
 </suppressions>
