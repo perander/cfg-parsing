@@ -21,6 +21,11 @@ public class Cyk implements Parser {
         this.grammar = grammar;
     }
 
+    @Override
+    public String getName() {
+        return "CYK";
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -29,23 +34,21 @@ public class Cyk implements Parser {
      * @return
      */
     @Override
-    public boolean belongsToLanguage(Grammar grammar, final String phrase) {
+    public boolean belongsToLanguage(Grammar grammar, final String[] phrase) {
         //prepare the word-array
         String[][][] t;
-
-        String[] words = phrase.split(" ");
 
         List<String> parents = grammar.getAllParents();
         List<List<String>> children = grammar.getAllChildren();
 
-        int n = words.length;
+        int n = phrase.length;
         int m = parents.size() + children.size() + 1;
 
         //initialise the table
         t = new String[2 * n + 1][2 * n + 1][m + 1];
 
         //fill the bottommost row first with the words and simple rules
-        t = fillFirstRow(t, n, m, children, words);
+        t = fillFirstRow(t, n, m, children, phrase);
 
         //continuing to the other rows of the table
         t = fillRest(t, n, m, children);
@@ -57,18 +60,29 @@ public class Cyk implements Parser {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @param phrase  a string representing a phrase
+     * @return
+     */
+    @Override
+    public boolean belongsToLanguage(final String[] phrase) {
+        return belongsToLanguage(grammar, phrase);
+    }
+
+    /**
      * Fill in the first row of the CYK-table. the first row consists of only the individual words of the phrase and the symbols resulting directly to them.
      *
      * @param t        the cyk table
      * @param length   length of the array of words
      * @param maxDepth maximum depth of a page, determined by the maximum amount of symbols in the grammar
      * @param children all symbols in the grammar with at least one parent
-     * @param words    array of the individual words in the phrase
+     * @param phrase    array of the individual words in the phrase
      */
-    public String[][][] fillFirstRow(String[][][] t, int length, int maxDepth, List<List<String>> children, String[] words) {
+    public String[][][] fillFirstRow(String[][][] t, int length, int maxDepth, List<List<String>> children, String[] phrase) {
         //initial values: words as one row in the table
         for (int i = 0; i < length; i++) {
-            t[i][i][0] = words[i];
+            t[i][i][0] = phrase[i];
         }
 
         //direct rules (parents to children with only 1 element)

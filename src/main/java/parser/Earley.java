@@ -22,6 +22,11 @@ public class Earley implements Parser {
         this.grammar = grammar;
     }
 
+    @Override
+    public String getName() {
+        return "Earley";
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -30,19 +35,27 @@ public class Earley implements Parser {
      * @return
      */
     @Override
-    public boolean belongsToLanguage(Grammar grammar, String phrase) {
-        //TODO: parsing the input needs to be done somewhere else
-        String[] words = phrase.split(" ");
-
+    public boolean belongsToLanguage(Grammar grammar, String[] phrase) {
         //create starting state containing the root rule
         Rule startRule = new Rule("start", grammar.getRoot());
         State startState = new State(startRule, 0, 0);
 
-        State[][] t = init(words);
+        State[][] t = init(phrase);
 
-        t = parse(t, words, startState);
+        t = parse(t, phrase, startState);
 
-        return lastColumnIncludesCompletedStartState(t, words.length, startState);
+        return lastColumnIncludesCompletedStartState(t, phrase.length, startState);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param phrase  a string representing a phrase
+     * @return
+     */
+    @Override
+    public boolean belongsToLanguage(String[] phrase) {
+        return belongsToLanguage(grammar, phrase);
     }
 
     /**
@@ -51,8 +64,8 @@ public class Earley implements Parser {
      * @param words the given phrase as array
      * @return
      */
-    public State[][] init(String[] words) {
-        State[][] t = new State[words.length + 1][grammar.getAllParents().size() * grammar.getAllChildren().size()];
+    public State[][] init(String[] phrase) {
+        State[][] t = new State[phrase.length + 1][grammar.getAllParents().size() * grammar.getAllChildren().size()];
         return t;
     }
 
@@ -64,10 +77,10 @@ public class Earley implements Parser {
      * @param startState starting state
      * @return the state array after parsing
      */
-    public State[][] parse(State[][] t, String[] words, State startState) {
+    public State[][] parse(State[][] t, String[] phrase, State startState) {
         t = fill(t, 0, startState);
 
-        for (int i = 0; i <= words.length; i++) {
+        for (int i = 0; i <= phrase.length; i++) {
             for (State state : t[i]) {
                 if (state != null) {
                     //if state not finished
@@ -76,7 +89,7 @@ public class Earley implements Parser {
                         if (!grammar.getTerminals().contains(next)) { //if next non-terminal
                             t = predict(t, state, i);
                         } else { //if next terminal
-                            t = scan(t, state, i, words);
+                            t = scan(t, state, i, phrase);
                         }
                     } else {
                         t = complete(t, state, i);
@@ -148,10 +161,10 @@ public class Earley implements Parser {
      * @param words phrase as array
      * @return state array
      */
-    public State[][] scan(State[][] t, State state, int k, String[] words) {
+    public State[][] scan(State[][] t, State state, int k, String[] phrase) {
         String next = state.getnextElement();
 
-        if (k < words.length && next.equals(words[k])) {
+        if (k < phrase.length && next.equals(phrase[k])) {
             State newState = new State(state.getRule(), state.getDot() + 1, state.getOrigin());
             //newState.incrementDot();
             t = fill(t, k + 1, newState);
