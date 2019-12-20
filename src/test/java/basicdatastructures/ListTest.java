@@ -25,7 +25,7 @@ public class ListTest {
     }
 
     @Test
-    public void sizeWorks () {
+    public void sizeWorks() {
         assertTrue(0 == list.size());
         list.add(0);
         assertTrue(1 == list.size());
@@ -35,7 +35,7 @@ public class ListTest {
     }
 
     @Test
-    public void sizeGrowsExpectedly () {
+    public void sizeGrowsExpectedly() {
         assertTrue(0 == list.size());
 
         for (int i = 0; i < 10; i++) {
@@ -50,7 +50,6 @@ public class ListTest {
 
         assertTrue(20 == list.size());
     }
-
 
 
     @Test

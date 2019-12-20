@@ -39,12 +39,12 @@ public class MultiMapTest {
         map.put("one", 1);
         List<Integer> values = map.get("one");
 
-        assertTrue(values.size()==1 && values.contains(1));
+        assertTrue(values.size() == 1 && values.contains(1));
 
         map.put("one", 2);
         values = map.get("one");
 
-        assertTrue(values.size()==2 && values.contains(1) && values.contains(2));
+        assertTrue(values.size() == 2 && values.contains(1) && values.contains(2));
     }
 
     @Test
@@ -53,15 +53,15 @@ public class MultiMapTest {
 
         map.put("one", 1);
 
-        assertTrue(map.keySet().size()==1 && map.keySet().contains("one"));
+        assertTrue(map.keySet().size() == 1 && map.keySet().contains("one"));
 
         map.put("one", 2);
 
-        assertTrue(map.keySet().size()==1 && map.keySet().contains("one"));
+        assertTrue(map.keySet().size() == 1 && map.keySet().contains("one"));
 
         map.put("two", 2);
 
-        assertTrue(map.keySet().size()==2 && map.keySet().contains("one") && map.keySet().contains("two"));
+        assertTrue(map.keySet().size() == 2 && map.keySet().contains("one") && map.keySet().contains("two"));
     }
 
     @Test
@@ -70,15 +70,15 @@ public class MultiMapTest {
 
         map.put("one", 1);
 
-        assertTrue(map.valueSet().size()==1 && map.valueSet().contains(1));
+        assertTrue(map.valueSet().size() == 1 && map.valueSet().contains(1));
 
         map.put("two", 1);
 
-        assertTrue(map.valueSet().size()==1 && map.valueSet().contains(1));
+        assertTrue(map.valueSet().size() == 1 && map.valueSet().contains(1));
 
         map.put("two", 2);
 
-        assertTrue(map.valueSet().size()==2 && map.valueSet().contains(1) && map.valueSet().contains(2));
+        assertTrue(map.valueSet().size() == 2 && map.valueSet().contains(1) && map.valueSet().contains(2));
     }
 
     @Test
