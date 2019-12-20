@@ -4,7 +4,7 @@
 
 ![structure diagram](../documentation/img/structure.png "structure")
 
-- The project has now 5 packages belonging to the program itself
+- The project has now 6 packages
     - `basicdatastructures`
         - List and MultiMap
     - `language`
@@ -15,10 +15,7 @@
         - Receives the inputs, calls validator and parsers
     - `validator`   
         - Validates the inputs, prepares the data structures for ui
-    
-- Additionally there is a package `efficiencytesting` containing classes testing the efficiency of the parsers.
-I decided to test the parsers in separate runnable classes so that state of the processor or the JVM would have less an effect on the result.
-
+    - Additionally there is a package `efficiencytesting` containing classes testing the efficiency of the parsers. I decided to test the parsers in separate runnable classes so that state of the processor or the JVM would have less an effect on the result.
 
 ### Time and space complexities, comparison
 
