@@ -50,7 +50,7 @@ public class Earley implements Parser {
     /**
      * {@inheritDoc}
      *
-     * @param phrase  a string representing a phrase
+     * @param phrase a string representing a phrase
      * @return
      */
     @Override
@@ -61,7 +61,7 @@ public class Earley implements Parser {
     /**
      * Initilises the state array.
      *
-     * @param words the given phrase as array
+     * @param phrase the given phrase as array
      * @return
      */
     public State[][] init(String[] phrase) {
@@ -70,10 +70,10 @@ public class Earley implements Parser {
     }
 
     /**
-     * Parses the words-array.
+     * Parses the phrase-array.
      *
      * @param t          a two-dimensional state array
-     * @param words      given phrase as an array
+     * @param phrase     given phrase as an array
      * @param startState starting state
      * @return the state array after parsing
      */
@@ -83,7 +83,6 @@ public class Earley implements Parser {
         for (int i = 0; i <= phrase.length; i++) {
             for (State state : t[i]) {
                 if (state != null) {
-                    //if state not finished
                     if (!state.isFinished()) {
                         String next = state.getnextElement();
                         if (!grammar.getTerminals().contains(next)) { //if next non-terminal
@@ -154,11 +153,11 @@ public class Earley implements Parser {
      * If the next element is equal to the k:th word, the state is copied,
      * dot incremented by one, and added to the state array.
      *
-     * @param t     state array
-     * @param state given state
-     * @param k     column number
-     * @param k     column number
-     * @param words phrase as array
+     * @param t      state array
+     * @param state  given state
+     * @param k      column number
+     * @param k      column number
+     * @param phrase phrase as array
      * @return state array
      */
     public State[][] scan(State[][] t, State state, int k, String[] phrase) {
@@ -166,7 +165,6 @@ public class Earley implements Parser {
 
         if (k < phrase.length && next.equals(phrase[k])) {
             State newState = new State(state.getRule(), state.getDot() + 1, state.getOrigin());
-            //newState.incrementDot();
             t = fill(t, k + 1, newState);
         }
         return t;
@@ -204,16 +202,13 @@ public class Earley implements Parser {
      * @return true if the completed start state is found, false if not
      */
     public boolean lastColumnIncludesCompletedStartState(State[][] t, int length, State startState) {
-        boolean found = false;
-        State completed = new State(startState.getRule(), startState.getDot(), startState.getOrigin());
-        completed.incrementDot();
+        State completed = new State(startState.getRule(), startState.getDot() + 1, startState.getOrigin());
 
         for (State state : t[length]) {
             if (state != null && state.equals(completed)) {
-                found = true;
-                break;
+                return true;
             }
         }
-        return found;
+        return false;
     }
 }

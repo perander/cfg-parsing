@@ -4,6 +4,9 @@ import basicdatastructures.List;
 import language.Grammar;
 import language.Rule;
 
+/**
+ * This class is a class handling parsing and validating strings and transforming them into phrases, rules and grammars.
+ */
 public class Validator {
 
     /**
@@ -94,7 +97,6 @@ public class Validator {
             return false;
         } else {
             rule.getChild().get(0).split(" ");
-            //TODO: System.out.println("rule " + rule.getChild() + " size: " + rule.getChild().size());
             if (rule.getChild().size() > 2) {
                 System.out.println("too long");
                 return false;
@@ -148,7 +150,7 @@ public class Validator {
      * @param child
      * @return
      */
-    public Rule prepareNewRule(String parent, String child) {
+    private Rule prepareNewRule(String parent, String child) {
         Rule rule = new Rule();
         List<String> elements = new List();
         String[] childElements = child.split(" ");

@@ -4,6 +4,10 @@ import language.Rule;
 
 import java.util.Objects;
 
+/**
+ * This class represents a state used in the Earley parser. A state has a rule, a dot, and an origin.
+ * The dot is basically an index telling which element of the rule is to be treated next. The origin tells the states place in the array used by the Earley parser.
+ */
 public class State {
     private Rule rule;
     private int dot;
@@ -33,6 +37,7 @@ public class State {
 
     /**
      * Create a new state.
+     *
      * @param rule
      * @param dot
      * @param origin
@@ -72,6 +77,7 @@ public class State {
 
     /**
      * Checks whether the state is finished, so whether the state has a next element.
+     *
      * @return true if there is no next element, false otherwise
      */
     public boolean isFinished() {

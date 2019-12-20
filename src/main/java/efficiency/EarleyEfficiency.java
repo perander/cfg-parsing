@@ -12,7 +12,6 @@ import java.io.IOException;
 
 /**
  * This class is used for speed tests for the Earley parser. It parses one phrase and records the time in nanoseconds.
- *
  */
 public class EarleyEfficiency {
     public static void main(String... args) throws IOException {

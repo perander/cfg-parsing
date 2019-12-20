@@ -5,7 +5,6 @@ import basicdatastructures.MultiMap;
 
 /**
  * A class representing a context-free grammar. It consists of a list of rules and provides information about them.
- *
  */
 public class Grammar {
     private List<Rule> rules;

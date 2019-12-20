@@ -85,6 +85,7 @@ public class MultiMap<K, V> {
 
     /**
      * Checks whether the map is empty.
+     *
      * @return true if the size is 0, false otherwise
      */
     public boolean isEmpty() {
