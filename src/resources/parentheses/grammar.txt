@@ -1,0 +1,1 @@
+s -> left right|left a|phrase phrase:phrase -> left right|left a:a -> phrase right:left -> (:right -> ):

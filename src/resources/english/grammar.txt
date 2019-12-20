@@ -1,0 +1,1 @@
+s -> np vp:vp -> v np | vp adv | v:np -> n:v -> fish:n -> fish | robots:adv -> today
