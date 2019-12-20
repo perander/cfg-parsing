@@ -5,6 +5,10 @@ import basicdatastructures.List;
 
 import java.util.Objects;
 
+/**
+ * A class representing a rule in a context-free grammar. A rule has one parent and one child with one or more elements. Parents and children are Strings.
+ *
+ */
 public class Rule {
 
     private String parent;
@@ -46,11 +50,10 @@ public class Rule {
             return false;
         }
         Rule rule = (Rule) o;
-        return Objects.equals(parent, rule.parent) &&
-                Objects.equals(child, rule.child);
+        return Objects.equals(this.parent, rule.parent) &&
+                Objects.equals(this.child, rule.child);
     }
 
-    //TODO: keksi ite
     @Override
     public int hashCode() {
         return Objects.hash(parent, child);

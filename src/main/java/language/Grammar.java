@@ -3,22 +3,18 @@ package language;
 import basicdatastructures.List;
 import basicdatastructures.MultiMap;
 
+/**
+ * A class representing a context-free grammar. It consists of a list of rules and provides information about them.
+ *
+ */
 public class Grammar {
-    private List<Rule> rules; //could be a set
-
-    //one parent to many children of possibly many elements (S -> NP VP | VP NP)
-    //private HashMap<String, List<List<String>>> parentToChild;
-
-    //possibly many parents to one children of possibly many elements (S -> NP VP, NP -> NP VP)
-    //private HashMap<List<String>, List<String>> childToParent;
+    private List<Rule> rules;
 
     private MultiMap<String, List<String>> parentToChild;
     private MultiMap<List<String>, String> childToParent;
 
     public Grammar() {
         this.rules = new List();
-        //this.parentToChild = new HashMap<>();
-        //this.childToParent = new HashMap<>();
         this.parentToChild = new MultiMap();
         this.childToParent = new MultiMap();
     }
@@ -136,16 +132,12 @@ public class Grammar {
      */
     private void updateMapping(Rule rule) {
         /*Collecting children to a parent. There might be many, like N -> fish, N -> robots.
-        The order of the elements of a child matters, that's why using a list.
-        this.parentToChild.putIfAbsent(rule.getParent(), new List());
-        this.parentToChild.get(rule.getParent()).add(rule.getChild());*/
+        The order of the elements of a child matters, that's why using a list.*/
 
         this.parentToChild.put(rule.getParent(), rule.getChild());
 
         /*Collecting parents to children. There might be many, like N -> fish, V -> fish.
-        Here the order of parents does not matter, but still using a list:d.
-        this.childToParent.putIfAbsent(rule.getChild(), new List());
-        this.childToParent.get(rule.getChild()).add(rule.getParent());*/
+        Here the order of parents does not matter, but still using a list :d.*/
 
         this.childToParent.put(rule.getChild(), rule.getParent());
     }
