@@ -33,6 +33,13 @@ public class Validator {
         return true;
     }
 
+    /**
+     * Checks whether the given child consists of more than 1 terminal symbol
+     *
+     * @param child
+     * @param terminals the terminal symbols of the grammar
+     * @return true if there are more than 1 terminal, false otherwise
+     */
     private boolean tooManyTerminals(List<String> child, List<String> terminals) {
         //more than one terminal in a row
         if (terminals.contains(child.get(0)) && child.size() != 1) {
@@ -41,6 +48,12 @@ public class Validator {
         return false;
     }
 
+    /**
+     * Checks whether the given child has more than 2 symbols
+     *
+     * @param child
+     * @return true if there are more than 2 symbols, false otherwise
+     */
     private boolean childTooLong(List<String> child) {
         if (child.size() > 2) {
             System.out.println("too long: " + child);
@@ -49,6 +62,14 @@ public class Validator {
         return false;
     }
 
+    /**
+     * Checks whether a given child consists of both terminal and non-terminal symbols
+     *
+     * @param child
+     * @param terminals the terminal symbols of the grammar
+     * @param parents   the non-terminal symbols of the grammar
+     * @return true if the child consists of both kinds of symbols, false otherwise
+     */
     private boolean mixedTerminals(List<String> child, List<String> terminals, List<String> parents) {
         //mixing terminals and non-terminals
         if (child.size() > 1) {
@@ -62,50 +83,51 @@ public class Validator {
     }
 
     /**
-     * Checks whether the child has too many elements (over 2)
+     * Checks whether the child has too many elements (over 2) or too little (none)
      *
      * @param rule
-     * @return true if the child has 2 or fewer elements, false otherwise
+     * @return true if the child has 2 or 1 elements, false otherwise
      */
     public boolean validateRule(Rule rule) {
-        rule.getChild().get(0).split(" ");
-
-        //System.out.println("rule " + rule.getChild() + " size: " + rule.getChild().size());
-        if (rule.getChild() == null || rule.getChild().size() > 2) {
+        if (rule.getChild().size() == 0 || rule.getChild() == null) {
+            System.out.println("too short");
             return false;
+        } else {
+            rule.getChild().get(0).split(" ");
+            //TODO: System.out.println("rule " + rule.getChild() + " size: " + rule.getChild().size());
+            if (rule.getChild().size() > 2) {
+                System.out.println("too long");
+                return false;
+            }
         }
         return true;
     }
 
     /**
-     * Parses the given string to a rule.
+     * Parses the given string to a rule and adds it to the given grammar.
+     * The given string may contain multiple children per parent, in format parent -> child1 | child2
      *
-     * @param s
-     * @return a rule parsed from the string
+     * @param s       the input string representing the rule
+     * @param grammar the rule will be added to this grammar
      */
-    public Rule prepareRule(String s) {
-        Rule rule = new Rule();
-
-        String[] temp = s.split(" ");
-
-        String parent = temp[0];
-        List child = new List();
-
-        //the rest of the array are the child's elements
-        for (int i = 1; i < temp.length; i++) {
-            child.add(temp[i]);
+    public void prepareRule(String s, Grammar grammar) {
+        if (!s.contains("->") || s.split("->").length < 2) {
+            System.out.println("Write the rule in format \"parent -> child\"");
+        } else {
+            String[] rule = s.split("->");
+            String parent = rule[0];
+            //separate individual children
+            String[] children = rule[1].split("\\|");
+            for (String child : children) {
+                grammar.addRule(prepareNewRule(parent.trim(), child.trim()));
+            }
         }
-
-        rule.setParent(parent);
-        rule.setChild(child);
-
-        return rule;
     }
 
     /**
-     * In the format S -> NV | VN
+     * Prepares the grammar by parsing rules and adding them to the grammar
      *
-     * @param s
+     * @param s a string representing a grammar
      * @return
      */
     public Grammar prepareGrammar(String s) {
@@ -114,20 +136,13 @@ public class Validator {
         String[] rules = s.split(":");
         for (int i = 0; i < rules.length; i++) {
             //separate parent and children
-            String[] rule = rules[i].split("->");
-            String parent = rule[0];
-            //separate individual children
-            String[] children = rule[1].split("\\|");
-
-            for (String child : children) {
-                grammar.addRule(prepareNewRule(parent.trim(), child.trim()));
-            }
+            prepareRule(rules[i], grammar);
         }
         return grammar;
     }
 
     /**
-     * In the format S -> NV
+     * In the format parent -> child
      *
      * @param parent
      * @param child
@@ -145,11 +160,28 @@ public class Validator {
         rule.setParent(parent);
         rule.setChild(elements);
 
-
         if (validateRule(rule)) {
             return rule;
         }
-
         return rule;
+    }
+
+    /**
+     * Parses the given phrase
+     *
+     * @param phrase
+     * @return
+     */
+    public String[] preparePhrase(String phrase) {
+        String[] parsed;
+        if (phrase != null) {
+            if (phrase.contains(" ")) {
+                parsed = phrase.split(" ");
+            } else {
+                parsed = phrase.split("");
+            }
+            return parsed;
+        }
+        return null;
     }
 }
