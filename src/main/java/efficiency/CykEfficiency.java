@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * This class is used for speed tests for the CYK algorithm. It parses one phrase and records the time in nanoseconds.
+ */
 public class CykEfficiency {
     public static void main(String... args) throws IOException {
         Validator validator = new Validator();
@@ -31,6 +34,5 @@ public class CykEfficiency {
 
         System.out.println(phraseUnparsed + " - " + belongs);
         System.out.println("Took " + ((end - start) / 1e6) + "ms");
-        System.out.println("Took " + ((end - start) / 1e9) + "s");
     }
 }

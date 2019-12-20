@@ -10,6 +10,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * This class is used for speed tests for the Earley parser. It parses one phrase and records the time in nanoseconds.
+ *
+ */
 public class EarleyEfficiency {
     public static void main(String... args) throws IOException {
         Validator validator = new Validator();
@@ -31,6 +35,5 @@ public class EarleyEfficiency {
 
         System.out.println("The phrase belongs to the language: " + belongs);
         System.out.println("Took " + ((end - start) / 1e6) + "ms");
-        System.out.println("Took " + ((end - start) / 1e9) + " s");
     }
 }
